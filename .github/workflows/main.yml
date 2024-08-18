@@ -2,7 +2,7 @@ name: Workflow
 
 on:
   schedule:
-    - cron: '0 18 * * *'
+    - cron: '0 16 * * *'
 
 jobs:
   build:
@@ -49,7 +49,7 @@ jobs:
 
       - name: Build and run Docker
         if: matrix.os != 'macos-14'
-        timeout-minutes: 270
+        timeout-minutes: 240
         continue-on-error: false
         run: |
           cd ${{ secrets.GIT_NAME }}
