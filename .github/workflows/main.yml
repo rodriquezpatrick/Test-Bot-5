@@ -2,7 +2,8 @@ name: Workflow
 
 on:
   schedule:
-    - cron: '30 18 * * *'
+    - cron: '0 18 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -10,9 +11,7 @@ jobs:
     strategy:
       matrix:
         os:
-          # - ubuntu-24.04
-          # - macos-14
-          - macos-13
+          - ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -23,12 +22,6 @@ jobs:
         with:
           all_but_latest: true
           access_token: ${{ github.token }}
-
-      - name: Set up Python
-        if: matrix.os == 'macos-14'
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.12
 
       - name: Set up Docker
         if: matrix.os == 'macos-13'
@@ -49,22 +42,12 @@ jobs:
 
       - name: Build and run Docker
         if: matrix.os != 'macos-14'
-        timeout-minutes: 270
+        timeout-minutes: 240
         continue-on-error: false
         run: |
           cd ${{ secrets.GIT_NAME }}
           docker build . -t tetris
           docker run tetris
-
-      - name: Running Code
-        if: matrix.os == 'macos-14'
-        timeout-minutes: 270
-        continue-on-error: false
-        run: |
-          cd ${{ secrets.GIT_NAME }}
-          brew install ffmpeg libmagic
-          pip3 install -r requirements.txt
-          python3 -m bot
 
       - name: Loop Workflow
         continue-on-error: true
